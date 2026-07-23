@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="SIIS Weddings">
+  <circle cx="100" cy="100" r="99" fill="#F6EFE6"/>
+  <circle cx="100" cy="100" r="96" fill="none" stroke="#2A1A18" stroke-width="2.5"/>
+  <g fill="#5C1B23" font-family="Georgia, 'Times New Roman', serif">
+    <text x="44"  y="140" font-size="126" text-anchor="middle">S</text>
+    <text x="80"  y="140" font-size="98"  text-anchor="middle">I</text>
+    <text x="120" y="140" font-size="98"  text-anchor="middle">I</text>
+    <text x="156" y="140" font-size="126" text-anchor="middle">S</text>
+    <circle cx="100" cy="84"  r="5.5"/>
+    <circle cx="100" cy="116" r="5.5"/>
+  </g>
+</svg>
