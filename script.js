@@ -10,6 +10,30 @@
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var WA = '9647505100113';
 
+  /* ------------------------------------------------------------------
+     Always open on the hero.
+     Runs immediately (before boot) so it beats the browser's own
+     fragment jump and scroll restoration:
+       - 'manual' stops the browser restoring a mid-page scroll on reload
+       - a stale #hash from a previous visit is stripped, so a bookmarked
+         or refreshed URL still lands on the front page
+     ------------------------------------------------------------------ */
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  if (location.hash) {
+    history.replaceState(null, '', location.pathname + location.search);
+  }
+  window.scrollTo(0, 0);
+  /* Re-assert at load, because late-loading imagery can shift layout — but
+     only while the visitor has not started scrolling, so we never yank
+     someone back to the top mid-read. */
+  var userMoved = false;
+  ['wheel', 'touchmove', 'keydown', 'pointerdown'].forEach(function (evt) {
+    window.addEventListener(evt, function () { userMoved = true; }, { passive: true, once: true });
+  });
+  window.addEventListener('load', function () {
+    if (!userMoved) window.scrollTo(0, 0);
+  });
+
   /* Unsplash URL helper */
   function u(id, w, h) {
     return 'https://images.unsplash.com/' + id + '?auto=format&fit=crop&w=' + w +
@@ -1381,7 +1405,8 @@
       e.preventDefault();
       var top = target.getBoundingClientRect().top + window.scrollY - 84;
       window.scrollTo({ top: top, behavior: reduced ? 'auto' : 'smooth' });
-      history.replaceState(null, '', id);
+      /* deliberately NOT writing the hash to the URL — doing so made a
+         refresh or a reopened bookmark land mid-page instead of the hero */
     });
 
     /* graceful image fallback */
