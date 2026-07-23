@@ -119,11 +119,63 @@ than a browser icon.
 
 ## Deploy
 
-Vercel picks up `vercel.json` automatically:
+Static files only — no build step, no install, no environment variables.
 
-```sh
-vercel --prod
-```
+**Cloudflare Pages (current target).** Connect the GitHub repo at
+*Workers & Pages → Create → Pages → Connect to Git*, then:
 
-Works unchanged on Netlify, Cloudflare Pages or GitHub Pages — it is only
-static files.
+| Setting | Value |
+|---|---|
+| Framework preset | None |
+| Build command | *(leave empty)* |
+| Build output directory | `/` |
+
+`_headers` applies the security headers and caching. Every push to `main`
+redeploys automatically.
+
+Also works unchanged on Vercel (which reads `vercel.json` instead),
+Netlify (reads `_headers`), or GitHub Pages (ignores both, so the security
+headers are lost there).
+
+### Custom domain
+
+The site is canonicalised to `https://siisweddings.com` in four places:
+`index.html` (canonical link, `og:url`, and two JSON-LD fields),
+`sitemap.xml`, and `robots.txt`. **If the domain ever changes, update all
+of them** or search engines will index against the wrong host.
+
+To connect it on Cloudflare Pages:
+
+1. *Pages project → Custom domains → Set up a domain* — add both
+   `siisweddings.com` and `www.siisweddings.com`.
+2. Cloudflare shows the exact DNS records to create. **Use the values it
+   displays**, not values copied from a tutorial — hosting IPs change.
+3. Turn on *SSL/TLS → Edge Certificates → Always Use HTTPS*.
+4. Send `www` to the apex so there is one canonical host: *Rules →
+   Redirect Rules → Create*, matching hostname `www.siisweddings.com`,
+   redirecting to `https://siisweddings.com/${http.request.uri.path}`
+   with a 301. (Pages `_redirects` handles paths, not hostnames, which is
+   why this is a dashboard rule.)
+
+DNS changes are usually live in minutes but can take up to 24 hours.
+
+## Handover checklist
+
+Ownership splits into three independent assets. The domain is the one that
+matters — whoever holds it controls the business's address.
+
+- [ ] **Domain** registered in **SIIS Weddings' own registrar account**,
+      in their name, on their card. If it currently sits in an agency
+      account, move it: same registrar → account "push" (instant);
+      different registrar → unlock, share the EPP/auth code, they
+      initiate. Note ICANN blocks registrar transfers within **60 days**
+      of registration or a previous transfer.
+- [ ] **Hosting account** created by the client, or transferred to them.
+      Agency retains access as a collaborator if it is staying on for
+      maintenance.
+- [ ] **Repository** either transferred (*Settings → General → Danger
+      Zone → Transfer ownership*, recipient must accept) or the client
+      added under *Settings → Collaborators*. Agree which, in writing.
+- [ ] Placeholder content above reviewed and replaced.
+- [ ] Google Search Console verified on the live domain, `sitemap.xml`
+      submitted.
