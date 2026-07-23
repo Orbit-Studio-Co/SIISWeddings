@@ -10,6 +10,23 @@
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var WA = '9647505100113';
 
+  /* ==================================================================
+     FORM DELIVERY  ← paste the access key here
+     ------------------------------------------------------------------
+     Get a free key at https://web3forms.com — enter the address that
+     should receive enquiries and they email the key straight back. No
+     account, no card, 250 submissions/month.
+
+     With a key set : the enquiry is emailed to SIIS, the visitor sees an
+                      on-page confirmation, and WhatsApp becomes an
+                      optional button rather than a forced redirect.
+     Left empty     : falls back to WhatsApp-only, exactly as before, so
+                      nothing breaks while this is unconfigured.
+     ================================================================== */
+  var FORM_KEY = '';
+  var FORM_ENDPOINT = 'https://api.web3forms.com/submit';
+  function formConfigured() { return typeof FORM_KEY === 'string' && FORM_KEY.trim().length > 10; }
+
   /* ------------------------------------------------------------------
      Always open on the hero.
      Runs immediately (before boot) so it beats the browser's own
@@ -242,8 +259,15 @@
       'f.budget4':'$70,000+','f.budget5':'Not sure yet',
       'f.services':'Services of interest','f.serv1':'Full wedding production','f.serv2':'Planning & coordination',
       'f.serv3':'Photography & film only','f.serv4':'Decoration & floral design','f.serv5':'Destination wedding',
-      'f.msg':'Tell us about your day','f.submit':'Send via WhatsApp',
-      'f.note':'Your enquiry opens in WhatsApp so we can reply instantly.',
+      'f.msg':'Tell us about your day','f.submit':'Send enquiry',
+      'f.note':'We reply personally, usually within one day.',
+      'f.sending':'Sending…',
+      'f.sent.t':'Thank you — we have your enquiry.',
+      'f.sent.d':'We reply personally, usually within one day.',
+      'f.sent.wa':'Continue on WhatsApp',
+      'toast.sent':'Enquiry sent.',
+      'toast.saveErr':'We could not send that automatically — opening WhatsApp so nothing is lost.',
+      'news.off':'Newsletter sign-up is not connected yet. Please message us on WhatsApp.',
       'e.req':'This field is required','e.email':'Please enter a valid email','e.phone':'Please enter a valid phone number',
       'c.callus':'Speak to us','c.wa':'Book via WhatsApp','c.loc':'Erbil · Kurdistan Region, Iraq',
       'c.hours':'Studio hours','c.h1d':'Saturday – Thursday','c.h2d':'Friday','c.h2v':'By appointment',
@@ -367,8 +391,15 @@
       'f.budget4':'$٧٠,٠٠٠+','f.budget5':'هێشتا نەزانم',
       'f.services':'خزمەتگوزاریێن دڤیایی','f.serv1':'بەرهەمهێنانا تەمام','f.serv2':'پلاندانان و رێکخستن',
       'f.serv3':'تنێ وێنە و فیلم','f.serv4':'خەملاندن و دیزاینا گولان','f.serv5':'زەماوەندێ دەرڤەیی',
-      'f.msg':'دەربارەی رۆژا خۆ بۆ مە بێژە','f.submit':'رەوانەکرن ب واتسئەپێ',
-      'f.note':'پرسیارا تە ل واتسئەپێ ڤەدبیت دا ئەم زوی بەرسڤێ بدەین.',
+      'f.msg':'دەربارەی رۆژا خۆ بۆ مە بێژە','f.submit':'رەوانەکرنا داخوازیێ',
+      'f.note':'ئەم ب خۆ بەرسڤێ ددەین، پترجار د ناڤ رۆژەکێ دا.',
+      'f.sending':'د رەوانەکرنێ دا…',
+      'f.sent.t':'سوپاس — داخوازیا تە گەهشتە مە.',
+      'f.sent.d':'ئەم ب خۆ بەرسڤێ ددەین، پترجار د ناڤ رۆژەکێ دا.',
+      'f.sent.wa':'بەردەوامی ل واتسئەپێ',
+      'toast.sent':'داخوازی هاتە رەوانەکرن.',
+      'toast.saveErr':'مە نەشیا خۆدەستی بهێتە رەوانەکرن — واتسئەپ ڤەدبیت دا چو ون نەبیت.',
+      'news.off':'تۆمارکرنا نامەیێ هێشتا نەهاتیە پەیوەندکرن. تکایە ل واتسئەپێ پەیامێ بۆ مە بهنێرە.',
       'e.req':'ئەڤ خانە پێدڤیە','e.email':'تکایە ئیمەیلەکا دروست بنڤیسە','e.phone':'تکایە ژمارەکا دروست بنڤیسە',
       'c.callus':'دگەل مە بئاخڤە','c.wa':'ژمارتن ب واتسئەپێ','c.loc':'هەولێر · هەرێما کوردستانێ، عێراق',
       'c.hours':'دەمژمێرێن کارکرنێ','c.h1d':'شەممی – پێنجشەممی','c.h2d':'ئینی','c.h2v':'ب ژمارتنێ',
@@ -492,8 +523,15 @@
       'f.budget4':'$٧٠,٠٠٠+','f.budget5':'لم أحدد بعد',
       'f.services':'الخدمات المطلوبة','f.serv1':'إنتاج زفاف كامل','f.serv2':'تخطيط وتنسيق',
       'f.serv3':'تصوير وفيلم فقط','f.serv4':'ديكور وتصميم زهور','f.serv5':'زفاف في وجهة خارجية',
-      'f.msg':'حدثونا عن يومكم','f.submit':'أرسل عبر واتساب',
-      'f.note':'يُفتح استفساركم في واتساب لنتمكن من الرد فورًا.',
+      'f.msg':'حدثونا عن يومكم','f.submit':'إرسال الاستفسار',
+      'f.note':'نرد شخصيًا، عادةً خلال يوم واحد.',
+      'f.sending':'جارٍ الإرسال…',
+      'f.sent.t':'شكرًا — وصلنا استفساركم.',
+      'f.sent.d':'نرد شخصيًا، عادةً خلال يوم واحد.',
+      'f.sent.wa':'المتابعة عبر واتساب',
+      'toast.sent':'تم إرسال الاستفسار.',
+      'toast.saveErr':'تعذّر الإرسال تلقائيًا — سنفتح واتساب حتى لا يضيع شيء.',
+      'news.off':'التسجيل في النشرة غير مفعّل بعد. يرجى مراسلتنا عبر واتساب.',
       'e.req':'هذا الحقل مطلوب','e.email':'يرجى إدخال بريد إلكتروني صحيح','e.phone':'يرجى إدخال رقم هاتف صحيح',
       'c.callus':'تحدث إلينا','c.wa':'احجز عبر واتساب','c.loc':'أربيل · إقليم كردستان، العراق',
       'c.hours':'ساعات العمل','c.h1d':'السبت – الخميس','c.h2d':'الجمعة','c.h2v':'بموعد مسبق',
@@ -1301,15 +1339,110 @@
     return 'https://wa.me/' + WA + '?text=' + encodeURIComponent(lines.join('\n'));
   }
 
+  /* English-labelled payload, whatever language the visitor used, so the
+     enquiry email always reads the same way for the SIIS inbox. */
+  var MAIL_FIELDS = {
+    name: 'Name', phone: 'Phone', email: 'Email', date: 'Wedding date',
+    venue: 'Venue or city', budget: 'Budget', services: 'Services', message: 'Message'
+  };
+
+  function valueForEmail(form, name) {
+    var el = form.elements[name];
+    if (!el) return '';
+    if (el.tagName === 'SELECT') {
+      var o = el.options[el.selectedIndex];
+      if (!o || !o.value) return '';
+      var k = o.getAttribute('data-i18n');
+      return (k && I18N.en[k]) ? I18N.en[k] : o.value;
+    }
+    return (el.value || '').trim();
+  }
+
+  function buildPayload(form, subject) {
+    var p = {
+      access_key: FORM_KEY.trim(),
+      subject: subject,
+      from_name: 'SIIS Weddings website',
+      'Submitted in': lang.toUpperCase()
+    };
+    Object.keys(MAIL_FIELDS).forEach(function (k) {
+      var v = valueForEmail(form, k);
+      if (v) p[MAIL_FIELDS[k]] = v;
+    });
+    var email = valueForEmail(form, 'email');
+    if (email) p.replyto = email;
+    return p;
+  }
+
+  function send(payload) {
+    return fetch(FORM_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify(payload)
+    })
+      .then(function (r) { return r.json().catch(function () { return {}; }); })
+      .then(function (d) { if (!d || d.success !== true) throw new Error('rejected'); return d; });
+  }
+
+  function setBusy(form, on) {
+    var btn = $('button[type="submit"]', form);
+    if (!btn) return;
+    var label = $('span', btn);
+    if (on) {
+      btn.dataset.label = label ? label.textContent : '';
+      if (label) label.textContent = t('f.sending');
+      btn.disabled = true;
+    } else {
+      if (label && btn.dataset.label) label.textContent = btn.dataset.label;
+      btn.disabled = false;
+    }
+  }
+
+  function showDone(form, waUrl) {
+    var panel = form.getAttribute('data-done') && $(form.getAttribute('data-done'));
+    if (!panel) return;
+    var cont = $('[data-wa-continue]', panel);
+    if (cont) cont.href = waUrl;
+    form.hidden = true;
+    panel.hidden = false;
+    panel.scrollIntoView({ block: 'nearest', behavior: reduced ? 'auto' : 'smooth' });
+  }
+
   function initForms() {
     ['#bookingForm', '#modalForm'].forEach(function (sel) {
       var form = $(sel); if (!form) return;
+
       form.addEventListener('submit', function (e) {
         e.preventDefault();
+        /* honeypot: only a bot fills a field it cannot see */
+        if (form.elements.website && form.elements.website.value) return;
         if (!validate(form)) return;
-        toast(t('toast.wa'));
-        window.open(buildWA(form), '_blank', 'noopener');
+
+        var waUrl = buildWA(form);
+
+        /* No key configured — behave exactly as the original build did. */
+        if (!formConfigured()) {
+          toast(t('toast.wa'));
+          window.open(waUrl, '_blank', 'noopener');
+          return;
+        }
+
+        setBusy(form, true);
+        send(buildPayload(form, 'New wedding enquiry — SIIS Weddings'))
+          .then(function () {
+            setBusy(form, false);
+            toast(t('toast.sent'));
+            showDone(form, waUrl);
+          })
+          .catch(function () {
+            /* Delivery failed — fall back to WhatsApp so the lead is
+               never silently lost. */
+            setBusy(form, false);
+            toast(t('toast.saveErr'));
+            window.open(waUrl, '_blank', 'noopener');
+          });
       });
+
       $$('input, select, textarea', form).forEach(function (el) {
         el.addEventListener('input', function () {
           if (el.closest('.field').classList.contains('has-err')) setErr(el, '');
@@ -1321,11 +1454,35 @@
     if (news) {
       news.addEventListener('submit', function (e) {
         e.preventDefault();
-        var v = $('#newsEmail').value.trim();
+        var input = $('#newsEmail');
         var msg = $('#newsMsg');
-        var ok = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
-        if (msg) msg.textContent = ok ? t('toast.news') : t('toast.newsErr');
-        if (ok) { news.reset(); toast(t('toast.news')); }
+        var v = input.value.trim();
+
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) {
+          if (msg) msg.textContent = t('toast.newsErr');
+          return;
+        }
+        /* Never claim a subscription we have nowhere to store. */
+        if (!formConfigured()) {
+          if (msg) msg.textContent = t('news.off');
+          return;
+        }
+        if (msg) msg.textContent = t('f.sending');
+        send({
+          access_key: FORM_KEY.trim(),
+          subject: 'Newsletter sign-up — SIIS Weddings',
+          from_name: 'SIIS Weddings website',
+          Email: v,
+          replyto: v
+        })
+          .then(function () {
+            news.reset();
+            if (msg) msg.textContent = t('toast.news');
+            toast(t('toast.news'));
+          })
+          .catch(function () {
+            if (msg) msg.textContent = t('toast.newsErr');
+          });
       });
     }
   }

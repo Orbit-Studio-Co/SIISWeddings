@@ -793,6 +793,8 @@ body.cursor-hot .cursor{opacity:0}
 /* ----------------------------- CONTACT ------------------------------- */
 .contact__grid{display:grid;grid-template-columns:1.25fr .75fr;gap:clamp(2.25rem,4.5vw,4.5rem);align-items:start}
 .form{display:grid;grid-template-columns:1fr 1fr;gap:1.35rem}
+/* an explicit display rule outranks the UA [hidden] rule, so restore it */
+.form[hidden]{display:none}
 .form--modal{grid-template-columns:1fr 1fr;gap:1rem}
 .field{display:grid;gap:.5rem}
 .field--full{grid-column:1/-1}
@@ -815,6 +817,28 @@ body.cursor-hot .cursor{opacity:0}
 .field.has-err .err{opacity:1}
 .form__foot{display:grid;gap:.9rem;justify-items:start;margin-top:.5rem}
 .form__note{font-size:.7rem;color:var(--ink-3)}
+.btn[disabled]{opacity:.55;pointer-events:none}
+
+/* honeypot — off-screen rather than display:none, which some bots skip */
+.hp{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
+
+/* success state shown in place of the form once an enquiry is delivered */
+.form__done{
+  display:grid;justify-items:start;gap:.85rem;
+  padding:clamp(1.75rem,3vw,2.5rem);
+  border:1px solid rgba(176,141,87,.4);border-radius:var(--r-lg);
+  background:var(--bg-tint);
+}
+[data-theme="dark"] .form__done{background:var(--surface)}
+.form__done[hidden]{display:none}
+.form__done-tick{
+  width:52px;height:52px;border-radius:50%;display:grid;place-items:center;
+  background:var(--gold);color:#fff;
+}
+.form__done-tick svg{width:24px;height:24px}
+.form__done h3{font-size:clamp(1.4rem,2.4vw,1.9rem);color:var(--ink)}
+.form__done p{font-size:var(--fs-sm);color:var(--ink-2)}
+.form__done .btn{margin-top:.4rem}
 
 .contact__aside{display:grid;gap:1.5rem}
 .info{background:var(--bg-tint);border:1px solid var(--line-soft);border-radius:var(--r-lg);padding:clamp(1.5rem,2.4vw,2rem);display:grid;gap:.85rem}

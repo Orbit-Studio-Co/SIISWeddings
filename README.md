@@ -94,8 +94,34 @@ lightbox with arrow-key and swipe navigation. Counters, scroll reveals, split
 text, parallax and an animated process timeline. Gallery offers grid/masonry
 toggle, a cinematic slider, and a drag-to-compare colour-grade slider.
 
-Both enquiry forms validate inline, then compose a formatted message and open
-WhatsApp — there is no backend, so nothing is stored and nothing can be lost.
+## Enquiry delivery — one thing to configure
+
+Open `script.js` and paste an access key into `FORM_KEY` near the top:
+
+```js
+var FORM_KEY = '';   // ← paste key here
+```
+
+Get one free at **[web3forms.com](https://web3forms.com)** — enter the address
+that should receive enquiries and they email the key straight back. No
+account, no card, 250 submissions/month.
+
+**Until a key is set**, the site falls back to WhatsApp-only: the forms
+validate, then open WhatsApp with the details pre-filled. Nothing is stored,
+so if the visitor closes that tab the enquiry is gone. The newsletter box
+says sign-up is not connected yet rather than claiming a subscription that
+does not exist.
+
+**Once a key is set**, submitting emails the enquiry to SIIS, shows an
+on-page confirmation, and offers WhatsApp as an optional button instead of a
+forced redirect. This matters for desktop visitors — `wa.me` opens WhatsApp
+*Web*, which shows a QR-code screen to anyone who has not linked their phone,
+and that silently loses the lead. If the email fails to send, the site falls
+back to opening WhatsApp so nothing is lost either way.
+
+Enquiry emails are always written in English regardless of the language the
+visitor used, so the inbox reads consistently. Both forms carry an off-screen
+honeypot field; submissions that fill it are dropped.
 
 ### Accessibility
 
