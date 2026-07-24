@@ -819,9 +819,6 @@ body.cursor-hot .cursor{opacity:0}
 .form__note{font-size:.7rem;color:var(--ink-3)}
 .btn[disabled]{opacity:.55;pointer-events:none}
 
-/* honeypot — off-screen rather than display:none, which some bots skip */
-.hp{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
-
 /* success state shown in place of the form once an enquiry is delivered */
 .form__done{
   display:grid;justify-items:start;gap:.85rem;

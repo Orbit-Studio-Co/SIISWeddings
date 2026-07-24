@@ -1409,13 +1409,18 @@
   }
 
   function initForms() {
+    var readyAt = Date.now();
+
     ['#bookingForm', '#modalForm'].forEach(function (sel) {
       var form = $(sel); if (!form) return;
 
       form.addEventListener('submit', function (e) {
         e.preventDefault();
-        /* honeypot: only a bot fills a field it cannot see */
-        if (form.elements.website && form.elements.website.value) return;
+        /* Bot check by timing rather than a hidden input. A honeypot field
+           has to exist in the DOM, so a stale cached stylesheet can expose
+           it to real visitors — this cannot. Nobody fills a name, phone and
+           email in under three seconds. */
+        if (Date.now() - readyAt < 3000) return;
         if (!validate(form)) return;
 
         var waUrl = buildWA(form);
